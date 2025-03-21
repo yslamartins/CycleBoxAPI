@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./handlers/cycleBoxHandlers');
+
 const prisma = new PrismaClient();
 
 const app = express();
@@ -10,7 +12,6 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-
 async function testDbConnection() {
   try {
     await prisma.$connect();
@@ -18,11 +19,19 @@ async function testDbConnection() {
   } catch (error) {
     console.error("Erro ao conectar ao banco de dados:", error);
   }
+
 }
 
 testDbConnection();
 
-app.get('/', (req, res) => {
+// Rotas da API
+app.post('/products', createProduct);
+app.get('/products', getAllProducts);
+app.get('/products/:id', getProductById);
+app.put('/products/:id', updateProduct);
+app.delete('/products/:id', deleteProduct);
+
+app.get('/', (_, res) => {
   res.send('Servidor está funcionando!');
 });
 
