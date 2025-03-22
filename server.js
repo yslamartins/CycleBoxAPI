@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const authMiddleware = require("./handlers/authMiddleware");
+const authRoutes = require("./handlers/authHandlers");
 const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('./handlers/cycleBoxHandlers');
 
 const prisma = new PrismaClient();
@@ -11,6 +13,12 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use(authRoutes);
+
+//implementação de rota protegida
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "Você acessou uma rota protegida!", userId: req.userId });
+});
 
 async function testDbConnection() {
   try {

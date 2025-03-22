@@ -8,25 +8,28 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
+  
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
+    }
+  
+    const hashedPassword = await bcrypt.hash(password, 10);
+  
+    try {
+      const user = await prisma.user.create({
+        data: { name, email, password: hashedPassword },
+      });
+      res.status(201).json({ message: "Usuário criado com sucesso!" });
+    } catch (error) {
+      res.status(400).json({ message: "Erro ao criar usuário", error });
+    }
+  });
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  try {
-    const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
-    });
-    res.status(201).json({ message: "Usuário criado com sucesso!" });
-  } catch (error) {
-    res.status(400).json({ message: "Erro ao criar usuário", error });
-  }
-});
-
-router.post("/login", async (req, res) => {
+  const jwt = require("jsonwebtoken");
+  require("dotenv").config();
+  
+  router.post("/login", async (req, res) => {
     const { email, password } = req.body;
   
     const user = await prisma.user.findUnique({ where: { email } });
@@ -39,6 +42,7 @@ router.post("/login", async (req, res) => {
   
     res.json({ token });
   });
+  
   
 
 module.exports = router;
