@@ -1,28 +1,18 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+//const authRoutes = require('./routes/authRoutes');
+//const productRoutes = require('./routes/productRoutes');
+const prisma = require('./config/database');
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+//app.use(authRoutes);
+//app.use(productRoutes);
 
-
-async function testDbConnection() {
-  try {
-    await prisma.$connect();
-    console.log("Conectado ao banco de dados com sucesso!");
-  } catch (error) {
-    console.error("Erro ao conectar ao banco de dados:", error);
-  }
-}
-
-testDbConnection();
-
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('Servidor está funcionando!');
 });
 
