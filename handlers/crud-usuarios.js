@@ -11,24 +11,6 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-
-async function testDbConnection() {
-  try {
-    await prisma.$connect();
-    console.log("Conectado ao banco de dados com sucesso!");
-  } catch (error) {
-    console.error("Erro ao conectar ao banco de dados:", error);
-  }
-}
-
-testDbConnection();
-
-app.get('/', (req, res) => {
-  res.send('Servidor está funcionando!');
-});
-
-
-// CREATE USER //////////// alterei
 app.post("/users", async (req, res) => { 
   try {
     const { name, email, password } = req.body;
@@ -43,7 +25,6 @@ app.post("/users", async (req, res) => {
   }
 });
 
-// GET TODOS USERS 
 app.get("/users", async (req, res) => {
   try {
     const users = await prisma.user.findMany();
@@ -95,7 +76,6 @@ app.delete("/users/:id", async (req, res) => {
     res.status(500).json({ error: "Erro ao deletar usuário." });
   }
 });
-
 
 
 app.listen(port, () => {
