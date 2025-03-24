@@ -2,14 +2,17 @@ const bcryptjs = require('bcryptjs');
 const prisma = require('../config/database');
 
 const UserController = {
+  // Cria um novo usuário
   create: async (req, res) => {
     const { name, email, password } = req.body;
 
+    // Verifica se todos os campos obrigatórios foram fornecidos
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
     try {
+      // Verifica se o email já está cadastrado
       const existingUser = await prisma.user.findUnique({
         where: { email }
       });
@@ -18,8 +21,10 @@ const UserController = {
         return res.status(400).json({ error: "E-mail já cadastrado!" });
       }
 
+      // Hash da senha antes de salvar no banco de dados
       const hashedPassword = await bcryptjs.hash(password, 10);
 
+      // Cria o usuário no banco de dados
       const user = await prisma.user.create({
         data: {
           name,
@@ -38,27 +43,40 @@ const UserController = {
   login: async (req, res) => {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ error: "E-mail e senha são obrigatórios." });
+    }
+
     try {
-      const user = await prisma.user.findUnique({ where: { email } });
+      // Verifica se o usuário existe
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
       if (!user) {
-        return res.status(401).json({ error: "Credenciais inválidas." });
+        return res.status(401).json({ error: "E-mail ou senha inválidos." });
       }
 
-      const isPasswordValid = await bcryptjs.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(401).json({ error: "Credenciais inválidas." });
+      // Compara a senha fornecida com a senha armazenada
+      const passwordMatch = await bcryptjs.compare(password, user.password);
+
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "E-mail ou senha inválidos." });
       }
 
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      // Gera um token JWT
+      const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
-      return res.json({ token });
+      return res.status(200).json({ message: "Login realizado com sucesso!", token });
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       return res.status(500).json({ error: "Erro ao fazer login." });
     }
   },
 
-
+  // Busca todos os usuários
   findAll: async (_, res) => {
     try {
       const users = await prisma.user.findMany();
@@ -69,9 +87,10 @@ const UserController = {
     }
   },
 
+  // Busca um usuário pelo ID
   findById: async (req, res) => {
     const { id } = req.params;
-    
+
     try {
       const user = await prisma.user.findUnique({
         where: { id: parseInt(id) }
@@ -88,11 +107,13 @@ const UserController = {
     }
   },
 
+  // Atualiza um usuário pelo ID
   update: async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
-    
+
     try {
+      // Verifica se o usuário existe
       const userExists = await prisma.user.findUnique({
         where: { id: parseInt(id) }
       });
@@ -101,8 +122,10 @@ const UserController = {
         return res.status(404).json({ error: "Usuário não encontrado." });
       }
 
-      const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+      // Hash da nova senha, caso seja fornecida
+      const hashedPassword = password ? await bcryptjs.hash(password, 10) : undefined;
 
+      // Atualiza o usuário no banco de dados
       const updatedUser = await prisma.user.update({
         where: { id: parseInt(id) },
         data: {
@@ -119,10 +142,12 @@ const UserController = {
     }
   },
 
+  // Deleta um usuário pelo ID
   delete: async (req, res) => {
     const { id } = req.params;
-    
+
     try {
+      // Verifica se o usuário existe
       const userExists = await prisma.user.findUnique({
         where: { id: parseInt(id) }
       });
@@ -131,6 +156,7 @@ const UserController = {
         return res.status(404).json({ error: "Usuário não encontrado." });
       }
 
+      // Deleta o usuário do banco de dados
       await prisma.user.delete({
         where: { id: parseInt(id) }
       });
