@@ -1,16 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-//const authRoutes = require('./routes/authRoutes');
-//const productRoutes = require('./routes/productRoutes');
 const prisma = require('./config/database');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors());
-app.use(express.json());
-//app.use(authRoutes);
-//app.use(productRoutes);
+app.use(cors()); 
+app.use(express.json()); 
+
+app.use(userRoutes); 
 
 app.get('/', (_, res) => {
   res.send('Servidor está funcionando!');
