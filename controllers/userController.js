@@ -1,54 +1,120 @@
-const UserModel = require('../models/userModel');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
+const prisma = require('../config/database');
 
 const UserController = {
   create: async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Todos os campos são obrigatórios." });
+    }
+
     try {
-      const { name, email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await UserModel.create({ name, email, password: hashedPassword });
-      res.status(201).json(user);
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (existingUser) {
+        return res.status(400).json({ error: "E-mail já cadastrado!" });
+      }
+
+      const hashedPassword = await bcryptjs.hash(password, 10);
+
+      const user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          password: hashedPassword
+        }
+      });
+
+      return res.status(201).json(user);
     } catch (error) {
-      res.status(400).json({ error: "Erro ao criar usuário." });
+      console.error("Erro ao criar usuário:", error);
+      return res.status(500).json({ error: "Erro ao criar usuário." });
     }
   },
 
-  findAll: async (req, res) => {
+  findAll: async (_, res) => {
     try {
-      const users = await UserModel.findAll();
-      res.json(users);
+      const users = await prisma.user.findMany();
+      return res.status(200).json(users);
     } catch (error) {
-      res.status(500).json({ error: "Erro ao buscar usuários." });
+      console.error("Erro ao buscar usuários:", error);
+      return res.status(500).json({ error: "Erro ao buscar usuários." });
     }
   },
 
   findById: async (req, res) => {
+    const { id } = req.params;
+    
     try {
-      const user = await UserModel.findById(req.params.id);
-      if (!user) return res.status(404).json({ error: "Usuário não encontrado." });
-      res.json(user);
+      const user = await prisma.user.findUnique({
+        where: { id: parseInt(id) }
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
+      }
+
+      return res.status(200).json(user);
     } catch (error) {
-      res.status(500).json({ error: "Erro ao buscar usuário." });
+      console.error("Erro ao buscar usuário:", error);
+      return res.status(500).json({ error: "Erro ao buscar usuário." });
     }
   },
 
   update: async (req, res) => {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+    
     try {
-      const { name, email, password } = req.body;
+      const userExists = await prisma.user.findUnique({
+        where: { id: parseInt(id) }
+      });
+
+      if (!userExists) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
+      }
+
       const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
-      const user = await UserModel.update(req.params.id, { name, email, password: hashedPassword });
-      res.json(user);
+
+      const updatedUser = await prisma.user.update({
+        where: { id: parseInt(id) },
+        data: {
+          name: name || userExists.name,
+          email: email || userExists.email,
+          password: hashedPassword || userExists.password
+        }
+      });
+
+      return res.status(200).json(updatedUser);
     } catch (error) {
-      res.status(400).json({ error: "Erro ao atualizar usuário." });
+      console.error("Erro ao atualizar usuário:", error);
+      return res.status(500).json({ error: "Erro ao atualizar usuário." });
     }
   },
 
   delete: async (req, res) => {
+    const { id } = req.params;
+    
     try {
-      await UserModel.delete(req.params.id);
-      res.json({ message: "Usuário deletado com sucesso." });
+      const userExists = await prisma.user.findUnique({
+        where: { id: parseInt(id) }
+      });
+
+      if (!userExists) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
+      }
+
+      await prisma.user.delete({
+        where: { id: parseInt(id) }
+      });
+
+      return res.status(200).json({ message: "Usuário deletado com sucesso." });
     } catch (error) {
-      res.status(500).json({ error: "Erro ao deletar usuário." });
+      console.error("Erro ao deletar usuário:", error);
+      return res.status(500).json({ error: "Erro ao deletar usuário." });
     }
   }
 };
