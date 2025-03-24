@@ -35,6 +35,30 @@ const UserController = {
     }
   },
 
+  login: async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        return res.status(401).json({ error: "Credenciais inválidas." });
+      }
+
+      const isPasswordValid = await bcryptjs.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ error: "Credenciais inválidas." });
+      }
+
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      return res.json({ token });
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      return res.status(500).json({ error: "Erro ao fazer login." });
+    }
+  },
+
+
   findAll: async (_, res) => {
     try {
       const users = await prisma.user.findMany();

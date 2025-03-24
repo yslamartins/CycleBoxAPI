@@ -1,28 +1,22 @@
 const express = require('express');
-const cors = require('cors');
-const prisma = require('./config/database');
+const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 
+dotenv.config(); // Carrega variáveis de ambiente
+
 const app = express();
-const port = process.env.PORT || 4000;
+app.use(express.json()); // Habilita o uso de JSON
 
-app.use(cors()); 
-app.use(express.json()); 
+// Rotas
+app.use('/users', userRoutes);
+app.use('/products', productRoutes);
 
-app.use(userRoutes);
-app.use(productRoutes);
-
-app.get('/', (_, res) => {
-  res.send('Servidor está funcionando!');
+// Middleware de erro global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Erro interno do servidor.' });
 });
 
-app.listen(port, () => {
-  console.log(`O servidor está rodando em http://localhost:${port}`);
-});
-
-process.on('SIGINT', async () => {
-  await prisma.$disconnect();
-  console.log('Prisma desconectado');
-  process.exit(0);
-});
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
