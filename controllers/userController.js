@@ -1,30 +1,27 @@
 const bcryptjs = require('bcryptjs');
 const prisma = require('../config/database');
+const jwt = require('jsonwebtoken');
+
 
 const UserController = {
-  // Cria um novo usuário
+  
   create: async (req, res) => {
     const { name, email, password } = req.body;
-
-    // Verifica se todos os campos obrigatórios foram fornecidos
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
     try {
-      // Verifica se o email já está cadastrado
       const existingUser = await prisma.user.findUnique({
-        where: { email }
+        where: { email: email.toLowerCase() },
       });
 
       if (existingUser) {
         return res.status(400).json({ error: "E-mail já cadastrado!" });
       }
 
-      // Hash da senha antes de salvar no banco de dados
       const hashedPassword = await bcryptjs.hash(password, 10);
 
-      // Cria o usuário no banco de dados
       const user = await prisma.user.create({
         data: {
           name,
@@ -33,7 +30,7 @@ const UserController = {
         }
       });
 
-      return res.status(201).json(user);
+      return res.status(201).json("usuário Cadastrado com suscesso!");
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
       return res.status(500).json({ error: "Erro ao criar usuário." });
@@ -42,29 +39,28 @@ const UserController = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res.status(400).json({ error: "E-mail e senha são obrigatórios." });
     }
 
     try {
-      // Verifica se o usuário existe
       const user = await prisma.user.findUnique({
         where: { email },
       });
+
+      console.log("Usuário encontrado:", user);
 
       if (!user) {
         return res.status(401).json({ error: "E-mail ou senha inválidos." });
       }
 
-      // Compara a senha fornecida com a senha armazenada
       const passwordMatch = await bcryptjs.compare(password, user.password);
 
       if (!passwordMatch) {
         return res.status(401).json({ error: "E-mail ou senha inválidos." });
       }
 
-      // Gera um token JWT
       const token = jwt.sign({ userId: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
@@ -76,7 +72,6 @@ const UserController = {
     }
   },
 
-  // Busca todos os usuários
   findAll: async (_, res) => {
     try {
       const users = await prisma.user.findMany();
@@ -87,7 +82,6 @@ const UserController = {
     }
   },
 
-  // Busca um usuário pelo ID
   findById: async (req, res) => {
     const { id } = req.params;
 
@@ -107,13 +101,12 @@ const UserController = {
     }
   },
 
-  // Atualiza um usuário pelo ID
   update: async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
 
     try {
-      // Verifica se o usuário existe
+
       const userExists = await prisma.user.findUnique({
         where: { id: parseInt(id) }
       });
@@ -121,11 +114,8 @@ const UserController = {
       if (!userExists) {
         return res.status(404).json({ error: "Usuário não encontrado." });
       }
-
-      // Hash da nova senha, caso seja fornecida
       const hashedPassword = password ? await bcryptjs.hash(password, 10) : undefined;
 
-      // Atualiza o usuário no banco de dados
       const updatedUser = await prisma.user.update({
         where: { id: parseInt(id) },
         data: {
@@ -142,12 +132,10 @@ const UserController = {
     }
   },
 
-  // Deleta um usuário pelo ID
   delete: async (req, res) => {
     const { id } = req.params;
 
     try {
-      // Verifica se o usuário existe
       const userExists = await prisma.user.findUnique({
         where: { id: parseInt(id) }
       });
@@ -156,7 +144,7 @@ const UserController = {
         return res.status(404).json({ error: "Usuário não encontrado." });
       }
 
-      // Deleta o usuário do banco de dados
+      
       await prisma.user.delete({
         where: { id: parseInt(id) }
       });
