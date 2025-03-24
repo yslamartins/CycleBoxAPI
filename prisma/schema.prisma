@@ -8,11 +8,13 @@ datasource db {
 }
 
 model product {
-  id      Int    @id @default(autoincrement())
-  name    String
-  price   Float  
-  enabled Boolean 
-  image   String
+  id        Int    @id @default(autoincrement())
+  name      String
+  price     Float  
+  enabled   Boolean 
+  image     String
+  userId    Int
+  user      user    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model user {
@@ -20,6 +22,7 @@ model user {
   name      String
   email     String   @unique
   password  String
-   created_at DateTime @default(now()) 
+  role       String   @default("user")
+  created_at DateTime @default(now()) 
   updated_at DateTime @default(now()) @updatedAt
 }
