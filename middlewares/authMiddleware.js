@@ -1,22 +1,21 @@
-/*
-module.exports = (req, res, next) => {
-  // Implementação do middleware de autenticação
-  next();
+const jwt = require("jsonwebtoken");
+
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Token não fornecido" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(403).json({ message: "Token inválido" });
+  }
 };
 
-// routes/authRoutes.js
-const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
-const authHandlers = require('../handlers/authHandlers');
-const router = express.Router();
-
-router.use(authHandlers);
-
-// Implementação de rota protegida
-router.get("/protected", authMiddleware, (req, res) => {
-  res.json({ message: "Você acessou uma rota protegida!", userId: req.userId });
-});
-
-module.exports = router;
-*/
-
+module.exports = authMiddleware;
