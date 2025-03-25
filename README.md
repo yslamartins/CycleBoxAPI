@@ -1,38 +1,56 @@
 # Documentação da API Cyclebox
 
 ## Sobre a API
-Esta API gerencia os produtos da plataforma, permitindo listar, buscar, criar, atualizar e deletar produtos, além de gerenciar usuários. Algumas rotas precisam de autenticação e permissão de administrador.
+a API do Cyclebox gerencia os produtos disponíveis na plataforma permitindo listar buscar criar atualizar e deletar produtos também inclui funcionalidades para autenticação de usuários e controle de permissões o projeto foi realizado durante o módulo avançado do curso de Fullstack do Capacita Brasil C-Jovem
+
+## Índice
+- [Base URL](#base-url)
+- [Rotas Protegidas](#rotas-protegidas-apenas-administradores)
+  - [Criar um Novo Produto](#criar-um-novo-produto)
+  - [Atualizar um Produto](#atualizar-um-produto)
+  - [Deletar um Produto](#deletar-um-produto)
+- [Gerenciamento de Usuários](#gerenciamento-de-usuários-se-aplicável)
+  - [Criar um Usuário](#criar-um-usuário)
+  - [Atualizar um Usuário](#atualizar-um-usuário)
+  - [Deletar um Usuário](#deletar-um-usuário)
+- [Rotas Públicas](#rotas-públicas-abertas-para-todos)
+  - [Listar Todos os Produtos](#listar-todos-os-produtos)
+  - [Buscar um Produto Específico](#buscar-um-produto-específico)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Observações](#observações)
+
+
 
 ## Base URL
 ```
-https://679027cc49875e5a1a947d3c.mockapi.io/produtos
+URL da API (Definir quando disponível)
 ```
 
 ## Rotas Protegidas (Apenas Administradores)
 
 ### Criar um Novo Produto
-- Método: POST
-- Rota: /api/products
+- Método POST
+- Rota /api/products
 - Apenas administradores podem cadastrar novos produtos
-- Middlewares: authMiddleware, adminMiddleware
+- Middlewares authMiddleware adminMiddleware
 
-Exemplo de Requisição:
+Exemplo de Requisição
 ```json
 {
   "nome": "Tênis Branco",
-  "descricao": "Tênis confortável, tamanho 42",
+  "descricao": "Tênis confortável tamanho 42",
   "preco": 129.90,
   "imagem": "https://linkdaimagem.com/tenis.jpg"
 }
 ```
 
 ### Atualizar um Produto
-- Método: PUT
-- Rota: /api/products/:id
-- Apenas administradores podem alterar nome, preço e categoria de produtos
-- Middlewares: authMiddleware, adminMiddleware
+- Método PUT
+- Rota /api/products/:id
+- Apenas administradores podem alterar nome preço e categoria de produtos
+- Middlewares authMiddleware adminMiddleware
 
-Exemplo de Requisição:
+Exemplo de Requisição
 ```json
 {
   "preco": 99.90
@@ -40,12 +58,12 @@ Exemplo de Requisição:
 ```
 
 ### Deletar um Produto
-- Método: DELETE
-- Rota: /api/products/:id
+- Método DELETE
+- Rota /api/products/:id
 - Apenas administradores podem remover produtos
-- Middlewares: authMiddleware, adminMiddleware
+- Middlewares authMiddleware adminMiddleware
 
-Exemplo de Resposta:
+Exemplo de Resposta
 ```json
 {}
 ```
@@ -53,31 +71,31 @@ Exemplo de Resposta:
 ## Gerenciamento de Usuários (Se Aplicável)
 
 ### Criar um Usuário
-- Método: POST
-- Rota: /api/users
+- Método POST
+- Rota /api/users
 - Apenas administradores podem criar novos usuários
-- Middlewares: authMiddleware, adminMiddleware
+- Middlewares authMiddleware adminMiddleware
 
 ### Atualizar um Usuário
-- Método: PUT
-- Rota: /api/users/:id
+- Método PUT
+- Rota /api/users/:id
 - Apenas administradores podem editar dados de usuários
-- Middlewares: authMiddleware, adminMiddleware
+- Middlewares authMiddleware adminMiddleware
 
 ### Deletar um Usuário
-- Método: DELETE
-- Rota: /api/users/:id
+- Método DELETE
+- Rota /api/users/:id
 - Apenas administradores podem remover usuários
-- Middlewares: authMiddleware, adminMiddleware
+- Middlewares authMiddleware adminMiddleware
 
 ## Rotas Públicas (Abertas para Todos)
 
 ### Listar Todos os Produtos
-- Método: GET
-- Rota: /api/products
+- Método GET
+- Rota /api/products
 - Todos podem visualizar os produtos disponíveis
 
-Exemplo de Resposta:
+Exemplo de Resposta
 ```json
 [
   {
@@ -91,11 +109,11 @@ Exemplo de Resposta:
 ```
 
 ### Buscar um Produto Específico
-- Método: GET
-- Rota: /api/products/:id
+- Método GET
+- Rota /api/products/:id
 - Todos podem visualizar detalhes de um produto
 
-Exemplo de Resposta:
+Exemplo de Resposta
 ```json
 {
   "id": "1",
@@ -107,68 +125,22 @@ Exemplo de Resposta:
 ```
 
 ## Tecnologias Utilizadas
-- Axios para requisições HTTP
 - Node.js como ambiente de execução
-- Express para gerenciar as rotas
-- PostgreSQL como banco de dados
-- Tengo.io para hospedar o banco
-
-## Gerenciamento de Branches no Projeto
-
-### Verificar a Branch Atual
-```bash
-git branch
-```
-
-### Criar uma Nova Branch
-```bash
-git checkout -b feature/nome-da-funcionalidade
-```
-Ou
-```bash
-git switch -c feature/nome-da-funcionalidade
-```
-
-### Adicionar Alterações e Fazer Commit
-```bash
-git add .
-git commit -m "Mensagem explicando a alteração"
-```
-
-### Enviar a Branch para o Repositório Remoto
-```bash
-git push origin feature/nome-da-funcionalidade
-```
-
-### Atualizar sua Branch Local
-```bash
-git pull origin nome-da-branch
-```
-
-### Mudar para a Branch Develop e Fazer Merge
-```bash
-git checkout develop
-git merge feature/nome-da-funcionalidade
-```
-
-### Enviar Alterações para o Repositório Remoto
-```bash
-git push origin develop
-```
-
-### Excluir a Branch Depois do Merge
-```bash
-git branch -d feature/nome-da-funcionalidade
-git push origin --delete feature/nome-da-funcionalidade
-```
-
-### Criar um Pull Request no GitHub ou GitLab
-Acesse o repositório, clique em "Create Pull Request" e siga os passos.
+- Express.js para gerenciar as rotas
+- Prisma ORM para manipulação do banco de dados
+- PostgreSQL como banco de dados principal
+- Tembo.io para hospedagem do banco de dados na nuvem
+- Axios para requisições HTTP
+- JWT Json Web Token para autenticação de usuários
+- Bcrypt.js para criptografia de senhas
+- dotenv para gerenciamento de variáveis de ambiente
+- express-validator para validação de dados nas requisições
+- cors para habilitar compartilhamento de recursos entre origens diferentes
+- pg cliente PostgreSQL para Node.js
+- nodemon para reiniciar automaticamente o servidor durante o desenvolvimento
 
 ## Observações
-- As rotas protegidas precisam de autenticação e permissão de administrador.
-- Os dados podem ser alterados ou removidos a qualquer momento.
-- Se um produto não for encontrado, a API retorna erro 404.
-
-
+- As rotas protegidas precisam de autenticação e permissão de administrador
+- Os dados podem ser alterados ou removidos a qualquer momento
+- Se um produto não for encontrado a API retorna erro 404
 
