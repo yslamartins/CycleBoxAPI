@@ -1,22 +1,19 @@
-/*
-module.exports = (req, res, next) => {
-  // Implementação do middleware de autenticação
-  next();
+const jwt = require("jsonwebtoken");
+const prisma = require("../config/database");
+
+module.exports = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "Token não fornecido" });
+
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    if (!user) return res.status(401).json({ message: "Usuário não encontrado" });
+
+    req.user = user; 
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Token inválido" });
+  }
 };
-
-// routes/authRoutes.js
-const express = require('express');
-const authMiddleware = require('../middlewares/authMiddleware');
-const authHandlers = require('../handlers/authHandlers');
-const router = express.Router();
-
-router.use(authHandlers);
-
-// Implementação de rota protegida
-router.get("/protected", authMiddleware, (req, res) => {
-  res.json({ message: "Você acessou uma rota protegida!", userId: req.userId });
-});
-
-module.exports = router;
-*/
-

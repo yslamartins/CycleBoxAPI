@@ -7,19 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model product {
+model Product {
   id      Int    @id @default(autoincrement())
   name    String
   price   Float  
   enabled Boolean 
   image   String
+  userId  Int?    
+  user    User?   @relation(fields: [userId], references: [id]) 
 }
 
-model user {
+model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
-   created_at DateTime @default(now()) 
+  isAdmin   Boolean  @default(false) 
+  products  Product[] 
+  created_at DateTime @default(now()) 
   updated_at DateTime @default(now()) @updatedAt
 }
