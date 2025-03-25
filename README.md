@@ -20,12 +20,6 @@ a API do Cyclebox gerencia os produtos disponíveis na plataforma permitindo lis
 - [Observações](#observações)
 
 
-
-## Base URL
-```
-URL da API (Definir quando disponível)
-```
-
 ## Rotas Protegidas (Apenas Administradores)
 
 ### Criar um Novo Produto
@@ -144,3 +138,9 @@ Exemplo de Resposta
 - Os dados podem ser alterados ou removidos a qualquer momento
 - Se um produto não for encontrado a API retorna erro 404
 
+## Colaboradores
+
+- Megue Ellen Andrade De Souza - [Github](https://github.com/MegEllenAS) | [LinkedIn](https://www.linkedin.com/in/megueellen)
+- Cláudia Ysla de Sousa Martins - [Github](https://github.com/yslamartins) | [LinkedIn](https://www.linkedin.com/in/ysla-martins-dev)
+- Teresa Campos - [Github](https://github.com/teresaccampos) | [LinkedIn](https://www.linkedin.com/in/teresacamposdev)
+- Jhonatan Gonçalves Pereira - [Github](https://github.com/jhonatan-goncalves-pereira) | [LinkedIn](https://www.linkedin.com/in/jhonatan-goncalves-pereira/)
