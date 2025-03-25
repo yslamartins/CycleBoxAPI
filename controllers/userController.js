@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const UserController = {
   
   create: async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, isAdmin } = req.body;
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
@@ -26,7 +26,8 @@ const UserController = {
         data: {
           name,
           email,
-          password: hashedPassword
+          password: hashedPassword,
+          isAdmin: isAdmin ?? false
         }
       });
 
