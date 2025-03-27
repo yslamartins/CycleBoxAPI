@@ -3,8 +3,8 @@ const ProductModel = require('../models/productModel');
 const ProductController = {
   create: async (req, res) => {
     try {
-      const { name, price, enabled, image } = req.body;
-      const product = await ProductModel.create({ name, price, enabled, image });
+      const { name, price, enabled, category, condition, image } = req.body;
+      const product = await ProductModel.create({ name, price, enabled, category, condition, image });
       res.status(201).json(product);
     } catch (error) {
       res.status(400).json({ error: "Erro ao criar produto." });
@@ -32,8 +32,8 @@ const ProductController = {
 
   update: async (req, res) => {
     try {
-      const {  name, price, enabled, image } = req.body;
-      const product = await ProductModel.update(req.params.id, { name, price, enabled, image });
+      const {  name, price, enabled, category, condition, image } = req.body;
+      const product = await ProductModel.update(req.params.id, { name, price, enabled, category, condition, image });
       res.json(product);
     } catch (error) {
       res.status(400).json({ error: "Erro ao atualizar produto." });
