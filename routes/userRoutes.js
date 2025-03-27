@@ -7,6 +7,31 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Usuario:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: ID do usuário
+ *         username:
+ *           type: string
+ *           description: Nome de usuário
+ *         password:
+ *           type: string
+ *           description: Senha do usuário
+ *         email:
+ *           type: string
+ *           description: Email do usuário
+ *       required:
+ *         - username
+ *         - password
+ *         - email
+ */
+
+/**
+ * @swagger
  * tags:
  *   name: Users
  *   description: As operações relacionadas aos usuários.
@@ -23,17 +48,7 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - username
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *                 description: Nome de usuário para o registro
- *               password:
- *                 type: string
- *                 description: Senha do usuário
+ *             $ref: '#/components/schemas/Usuario'
  *     responses:
  *       201:
  *         description: Usuário registrado com sucesso
@@ -85,15 +100,7 @@ router.post("/login", UserController.login);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - username
- *               - password
- *             properties:
- *               username:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/Usuario'
  *     responses:
  *       201:
  *         description: Usuário criado com sucesso
@@ -124,14 +131,7 @@ router.post("/", authMiddleware, adminMiddleware, UserController.create);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *                 description: Novo nome de usuário
- *               password:
- *                 type: string
- *                 description: Nova senha do usuário
+ *             $ref: '#/components/schemas/Usuario'
  *     responses:
  *       200:
  *         description: Usuário atualizado com sucesso
@@ -209,4 +209,3 @@ router.get("/", authMiddleware, UserController.findAll);
 router.get("/:id", authMiddleware, UserController.findById);
 
 module.exports = router;
-
