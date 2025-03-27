@@ -11,5 +11,9 @@
       "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "buildCommand": "npm install && npx prisma generate"
 } 
