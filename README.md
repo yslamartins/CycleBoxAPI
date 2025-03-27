@@ -144,3 +144,4 @@ Exemplo de Resposta
 - Cláudia Ysla de Sousa Martins - [Github](https://github.com/yslamartins) | [LinkedIn](https://www.linkedin.com/in/ysla-martins-dev)
 - Teresa Campos - [Github](https://github.com/teresaccampos) | [LinkedIn](https://www.linkedin.com/in/teresacamposdev)
 - Jhonatan Gonçalves Pereira - [Github](https://github.com/jhonatan-goncalves-pereira) | [LinkedIn](https://www.linkedin.com/in/jhonatan-goncalves-pereira/)
+- Bia Torres Da Costa - [Github](https://github.com/biatorresdacosta) | [LinkedIn](https://www.linkedin.com/in/biatorresdacosta/)
