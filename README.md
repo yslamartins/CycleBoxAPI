@@ -138,6 +138,12 @@ Exemplo de Resposta
 - Os dados podem ser alterados ou removidos a qualquer momento
 - Se um produto não for encontrado a API retorna erro 404
 
+### Acessando a documentação do Swagger
+
+Após o servidor estar rodando, a documentação da API estará disponível através do Swagger. Para acessá-la, abra seu navegador e vá para a URL:
+
+[http://localhost:4000/api-docs](http://localhost:4000/api-docs)
+
 ## Colaboradores
 
 - Megue Ellen Andrade De Souza - [Github](https://github.com/MegEllenAS) | [LinkedIn](https://www.linkedin.com/in/megueellen)
